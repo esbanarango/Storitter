@@ -1,4 +1,14 @@
 API::Application.routes.draw do
+
+  resources :users do
+    member do
+      get :following, :followers
+      end
+  end
+  resources :sessions
+  resources :posts
+  resources :relations
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

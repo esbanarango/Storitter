@@ -1,6 +1,5 @@
-class Employee < ActiveRecord::Base
+class Employee < Profile
 
 	#Associations
-	has_one :profile
 
 end
