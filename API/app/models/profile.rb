@@ -4,11 +4,12 @@ class Profile < ActiveRecord::Base
   	validates :username, :presence => true
   	
   	VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
-	validates :email, :presence => true, :format => { with: VALID_EMAIL_REGEX }
-
+	validates :email, :presence => true, length: { maximum: 255 }, :format => { with: VALID_EMAIL_REGEX },
+					  :uniqueness => { case_sensitive: false }
 
 	# Callbacks
 	before_save :truncated
+	before_save { |profile| profile.email = email.downcase }
 
 	attr_accessible :profile_picture 
 	has_attached_file :profile_picture, :styles => { :small => "100x100>", :medium => "300x300>", :large => "400x400>" }
