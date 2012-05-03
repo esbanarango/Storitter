@@ -37,7 +37,7 @@ gem "cancan", "~> 1.6.7"
 # Pagination
 gem "kaminari", "~> 0.13.0"
 # Share on facebook
-gem "fb_graph", "~> 2.4.11"
+gem "koala", "~> 1.4.1"
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
