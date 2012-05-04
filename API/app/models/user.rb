@@ -1,5 +1,7 @@
 class User < Profile
-	attr_accessible :username, :email
+	attr_accessible :username, :email, :first_name, :last_name, :fb_uid, :fb_access_token
+
+	after_save :confirmation_and_welcome_notification
 
 	#Associations
 	has_many :posts, dependent: :destroy
@@ -22,6 +24,10 @@ class User < Profile
 
 	def unfollow!(other_user)
 		relations.find_by_following_id(other_user.id).destroy
+	end
+
+	def confirmation_and_welcome_notification
+		UserMailer.registration_confirmation(self).deliver		
 	end
 
 end

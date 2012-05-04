@@ -1,11 +1,24 @@
 API::Application.routes.draw do
 
+  root to: 'sessions#login'
+
   resources :users do
     member do
-      get :followings, :followers
-      end
+      get     :followings, :followers
+      post    :follow
+    end
   end
+
+  match '/users/:id/followers', to: 'users#delete_followers', :via => 'delete'
+  match '/users/:id/followings', to:  'users#delete_followings', :via => 'delete'
+
   resources :sessions
+
+  match '/login', to: 'sessions#login', :via => 'get'
+  match '/logout', to: 'sessions#logout', :via => 'get'
+  match '/home', to: 'sessions#home', :via => 'get'
+  match '/callback', to: 'sessions#callback', :via => 'get'
+
   resources :posts
   resources :relations,   only: [:create, :destroy]
 
