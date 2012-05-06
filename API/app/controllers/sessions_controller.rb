@@ -8,8 +8,8 @@ class SessionsController < ApplicationController
 		if params["fb_access_token"]
 			fb_access_token = params["fb_access_token"]
 			graph = Koala::Facebook::API.new(fb_access_token)
+			@userFacebook = graph.get_object("me")
 			checkOrInsert(graph,fb_access_token)
-
 			respond_with @userFacebook
 		end
 	end
@@ -56,7 +56,6 @@ class SessionsController < ApplicationController
 	       @face='Welcome '+ username +'<br> You are logged in! <a href="/logout">Logout</a>'
 	       @graph = Koala::Facebook::API.new(session["access_token"])
 	       @token = session['access_token']
-	       #@graph.put_wall_post("Me has just joined Storitter")
 	     else
 	       @face='<a href="/login">Login</a>'
 	     end

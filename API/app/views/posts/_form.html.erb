@@ -15,6 +15,12 @@
     <%= f.label :message %><br />
     <%= f.text_area :message %>
   </div>
+  <div class="field">
+
+    <%= f.label :share %>
+    <%= f.check_box :share, {checked: @checked_share} %><br />
+    ¿Do you want it to be shared on your Facebook Timeline?
+  </div>
   <div class="actions">
     <%= f.submit %>
   </div>

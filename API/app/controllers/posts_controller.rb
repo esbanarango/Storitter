@@ -5,16 +5,16 @@ class PostsController < ApplicationController
 
 	def index
 		@post = Post.new
-	  	render action: "new"
+	  	redirect_to "/posts/new"
 	end
 
   # GET /posts/new
   # GET /posts/new.json
   def new
     @post = Post.new
-   # respond_to do |format|
-    #  format.html  new.html.erb
-   # end
+    @current_user = User.find(session[:user_id])
+    @checked_share =  @current_user.facebook_autoshare
+
   end
 
   # GET /posts/1/edit
@@ -30,6 +30,11 @@ class PostsController < ApplicationController
   	message = params[:post][:message]
   	@post = Post.new
 	  if current_user.save
+	  	#Put it on facebook
+	  	if params[:post][:share] != '0'
+	  		shareOnFacebook(current_user.fb_access_token,message)
+	  	end
+
 	    @notice = "Post successfully saved."
 	    followers = current_user.followers()
 	    puts followers.size()
@@ -39,14 +44,14 @@ class PostsController < ApplicationController
 				  http.get(params)
 				end
 	    end
+
 	  else
 	    @notice = "Error."
 	  end
-	  render action: "new" 
+	  redirect_to "/posts/new"
   end
 
-  # PUT /posts/1
-  # PUT /posts/1.json
+
   def update
     @post = Post.find(params[:id])
 
@@ -61,8 +66,7 @@ class PostsController < ApplicationController
     end
   end
 
-  # DELETE /posts/1
-  # DELETE /posts/1.json
+
   def destroy
     @post = Post.find(params[:id])
     @post.destroy
@@ -77,6 +81,12 @@ class PostsController < ApplicationController
 
   def user_logged
   	redirect_to "/home" unless session[:user_id]
+  end
+
+  def shareOnFacebook (access_token,message)
+  	graph = Koala::Facebook::API.new(access_token)
+  	graph.put_wall_post("Me has posted '#{message}' on Storitter")
+
   end
 
 end

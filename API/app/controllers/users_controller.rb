@@ -22,7 +22,7 @@ class UsersController < ApplicationController
 	    end
   	end
 
-
+    #get
 	def followings
 	    @user = User.find(params[:id])
 	    @users = @user.following_users()
@@ -35,10 +35,16 @@ class UsersController < ApplicationController
 	    render_for_api :return_info_follow, :json => @users, :root => :users
   	end
 
+    #POST 
   	def follow
   		current_user = User.find(session[:user_id])
   		@user = User.find(params[:id])
   		if current_user.follow!(@user)
+
+        if current_user.facebook_autoshare 
+          shareOnFacebook(current_user.fb_access_token,"Me is now following #{@user.username} on Storitter")
+        end
+
   			respond_with({:response => "success"}, :location => posts_url)
   		else
   			respond_with({:response => "error"}, :location => posts_url)
@@ -48,14 +54,33 @@ class UsersController < ApplicationController
   	def delete_followers
   		current_user = User.find(session[:user_id])
   		@user = User.find(params[:id])
-  		current_user.relations(@user).forbid = true
-  		current_user.save
+      relation = Relation.find_by_follower_id_and_following_id(@user.id,current_user.id)
+      puts relation.inspect
+  		relation.forbid = true
+      if relation.save
+        respond_with({:response => "ok"}, :location => posts_url)
+      else
+        respond_with({:response => "error"}, :location => posts_url)
+      end
   	end
 
   	def delete_followings
   		current_user = User.find(session[:user_id])
   		@user = User.find(params[:id])
-  		current_user.unfollow!(@user)
+  		if current_user.unfollow!(@user)
+        respond_with({:response => "ok"}, :location => posts_url)
+      else
+        respond_with({:response => "error"}, :location => posts_url)
+      end
   	end
+
+    private
+
+    def shareOnFacebook (access_token,message)
+      graph = Koala::Facebook::API.new(access_token)
+      graph.put_wall_post(message)
+
+    end
+
 
 end

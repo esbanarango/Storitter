@@ -35,7 +35,7 @@ class User < Profile
 		template.add :followers_count
 		template.add :followings_count
 		template.add :posts_count
-		template.add :profile_picture
+		template.add :profile_picture_small
 	end
 
 	# Complete user info with post
@@ -66,6 +66,14 @@ class User < Profile
 	def posts_count
 		self.posts.count
 	end
+
+	def profile_picture_small
+	    avatars = {}
+	    avatars[:small]   = profile_picture.url(:small)
+	    avatars
+	 end
+
+
 
 
 	def following?(other_user)
