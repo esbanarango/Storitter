@@ -14,12 +14,14 @@
 ActiveRecord::Schema.define(:version => 20120428072538) do
 
   create_table "posts", :force => true do |t|
-    t.integer  "profile_id",                                  :null => false
+    t.integer  "user_id",                                     :null => false
     t.text     "message",    :limit => 149,                   :null => false
     t.boolean  "visible",                   :default => true
     t.datetime "created_at",                                  :null => false
     t.datetime "updated_at",                                  :null => false
   end
+
+  add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id_and_created_at"
 
   create_table "profiles", :force => true do |t|
     t.string   "username",                     :limit => 40,                    :null => false
@@ -55,9 +57,11 @@ ActiveRecord::Schema.define(:version => 20120428072538) do
 
   create_table "sessions", :force => true do |t|
     t.string   "access_token", :null => false
-    t.integer  "profile_id",   :null => false
+    t.integer  "user_id",      :null => false
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
   end
+
+  add_index "sessions", ["user_id", "access_token"], :name => "index_sessions_on_user_id_and_access_token"
 
 end

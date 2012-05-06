@@ -14,6 +14,39 @@ class User < Profile
   	has_many :followers, through: :reverse_relations, source: :follower
   	
 
+  	acts_as_api
+
+  	api_accessible :return_public do |template|
+  		template.add :id
+		template.add :username
+  		template.add :first_name
+	    template.add :last_name
+	    template.add :followers_count
+		template.add :followings_count
+		template.add :posts_count
+	end
+
+	api_accessible :return_info_follow do |template|
+		template.add :id
+		template.add :username
+		template.add :followers_count
+		template.add :followings_count
+		template.add :posts_count
+		template.add :profile_picture
+	end
+
+	# Public methods for ac_as_api
+	def followers_count
+		self.followers.count
+	end
+	def followings_count
+		self.following_users.count
+	end
+	def posts_count
+		self.posts.count
+	end
+
+
 	def following?(other_user)
 		relations.find_by_following_id(other_user.id)
 	end

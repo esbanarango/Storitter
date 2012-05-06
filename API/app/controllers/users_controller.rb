@@ -5,7 +5,12 @@ class UsersController < ApplicationController
 
 	def index
 		@users = User.all
-		respond_with @users
+
+		render_for_api :return_public, :json => @users, :root => :users
+		#respond_to do |format|
+	     # format.json { render_for_api :return_public, :json => @users, :root => :users }
+	    #end
+		#respond_with :json => resp
 	end
 
 	def destroy
