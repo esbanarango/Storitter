@@ -12,9 +12,8 @@ require('express-namespace')
 
 var app = module.exports = express.createServer();
 
-require('./apps/socket-io')(app)
-
 // Configuration
+require('./apps/socket-io')(app)
 
 app.configure(function(){
   app.set('views', __dirname + '/views');

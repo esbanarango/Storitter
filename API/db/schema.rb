@@ -47,8 +47,9 @@ ActiveRecord::Schema.define(:version => 20120428072538) do
   create_table "relations", :force => true do |t|
     t.integer  "follower_id"
     t.integer  "following_id"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
+    t.boolean  "forbid",       :default => false
+    t.datetime "created_at",                      :null => false
+    t.datetime "updated_at",                      :null => false
   end
 
   add_index "relations", ["follower_id", "following_id"], :name => "index_relations_on_follower_id_and_following_id", :unique => true

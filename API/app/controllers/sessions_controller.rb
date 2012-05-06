@@ -37,9 +37,7 @@ class SessionsController < ApplicationController
 			checkOrInsert(graph,session['access_token'])
 
 			@user  = User.find_by_email(userEmail)
-			session['user_id'] = @user.id
-			session['user_email'] = userEmail
-			session['username'] = @user.username
+			session[:user] = @user
 
 		end
 		redirect_to '/home'
@@ -48,6 +46,7 @@ class SessionsController < ApplicationController
 	def logout
 	    session['oauth'] = nil
 	    session['access_token'] = nil
+	    session[:user] = nil
 	    redirect_to '/home'
 	  end
 

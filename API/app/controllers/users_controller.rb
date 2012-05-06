@@ -34,17 +34,22 @@ class UsersController < ApplicationController
   	end
 
   	def follow
+  		current_user = session[:user]
   		@user = User.find(params[:id])
   		current_user.follow!(@user)
   	end
 
   	def delete_followers
-  		
+  		current_user = session[:user]
+  		@user = User.find(params[:id])
+  		current_user.relations(@user).forbid = true
+  		current_user.save
   	end
 
   	def delete_followings
-  		
+  		current_user = session[:user]
+  		@user = User.find(params[:id])
+  		current_user.unfollow!(@user)
   	end
-
 
 end

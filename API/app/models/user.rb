@@ -49,6 +49,7 @@ class User < Profile
 		template.add :followings_count
 		template.add :posts_count
 		template.add :posts
+		template.add :followings_posts
 	end
 
 
@@ -58,6 +59,9 @@ class User < Profile
 	end
 	def followings_count
 		self.following_users.count
+	end
+	def followings_posts
+		Post.from_users_following_by(self)
 	end
 	def posts_count
 		self.posts.count

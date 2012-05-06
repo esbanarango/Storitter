@@ -1,8 +1,10 @@
-h1 Storitter User
+h1 Storitter Users
 
 ul#Users
 	each user in users
 		li(id=[user.id]) #{user.username}
 			ul
-				li Email: #{user.email}  
+				li Email: #{user.email}
+				li Following: #{user.followings_count}  
+				li Followers: #{user.followers_count}  
 				li Total post: #{user.posts_count}

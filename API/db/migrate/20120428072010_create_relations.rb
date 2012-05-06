@@ -1,8 +1,9 @@
 class CreateRelations < ActiveRecord::Migration
   def change
     create_table :relations do |t|
-    	t.integer :follower_id
+    	  t.integer :follower_id
       	t.integer :following_id
+        t.boolean :forbid, :default => false
 
       	t.timestamps
     end
