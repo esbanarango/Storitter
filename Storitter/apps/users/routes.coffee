@@ -6,28 +6,32 @@ routes = (app) ->
 
 	app.namespace '/users', ->
 
-		app.get '/:id', (req, res) ->
-			console.log "sisas"+req.body
-			if req.body.id?
-		        console.log "sisas 2"
-			    id = req.body.id
-			    message = req.body.message
-	    		updated_at = req.body.updated_at
-	    		console.log id +" "+ message +" "+ updated_at
-	    		post = new Post ({id: id, message: message, updated_at: updated_at})
-	    		console.log post
-	    		if socketIO = app.settings.socketIO	    		
-                	socketIO.sockets.emit "user:newMessage", post
-                	console.log "Neeea pa ahora siiii dormirme"
-			else
-		        console.log "nonas"
-		    	hrlp.requestAPI "localhost", "/users/#{req.params.id}.json", "GET", (_users) ->
-		    		user = new User _users.user
-		    		#console.log user
-		    		res.render "#{__dirname}/views/me",
-		            	title: "User #{user.username}"
-		            	user: user
 
+		app.get '/newMessage', (req, res) ->
+
+		    id = req.query["id"]
+		    message = req.query["message"]
+	    	updated_at = req.query["updated_at"]
+	    	post = new Post ({id: id, message: message, updated_at: updated_at})
+	    	respToServer = ""
+	    	if socketIO = app.settings.socketIO
+	    		socketIO.sockets.emit "user:newMessage:#{id}", post
+	    		console.log "New Message"
+	    		respToServer = "Ok"
+	    	else
+	    		respToServer = "Error"
+	    	res.header("Content-Type","application/json")
+	    	res.json({response: respToServer})
+	    	res.end()
+
+
+		app.get '/:id', (req, res) ->
+
+			hrlp.requestAPI "localhost", "/users/#{req.params.id}.json", "GET", (_users) ->
+				user = new User _users.user
+				res.render "#{__dirname}/views/me",
+					title: "User #{user.username}"
+					user: user
 
 
 		app.get '/', (req, res) ->

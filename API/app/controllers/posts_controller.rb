@@ -1,35 +1,20 @@
 class PostsController < ApplicationController
-  # GET /posts
-  # GET /posts.json
-  def index
-    @posts = Post.all
 
-    respond_to do |format|
-      format.html # index.html.erb
-      format.json { render json: @posts }
-    end
-  end
 
-  # GET /posts/1
-  # GET /posts/1.json
-  def show
-    @post = Post.find(params[:id])
+	before_filter :user_logged
 
-    respond_to do |format|
-      format.html # show.html.erb
-      format.json { render json: @post }
-    end
-  end
+	def index
+		@post = Post.new
+	  	render action: "new"
+	end
 
   # GET /posts/new
   # GET /posts/new.json
   def new
     @post = Post.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.json { render json: @post }
-    end
+   # respond_to do |format|
+    #  format.html  new.html.erb
+   # end
   end
 
   # GET /posts/1/edit
@@ -40,17 +25,24 @@ class PostsController < ApplicationController
   # POST /posts
   # POST /posts.json
   def create
-    @post = Post.new(params[:post])
-
-    respond_to do |format|
-      if @post.save
-        format.html { redirect_to @post, notice: 'Post was successfully created.' }
-        format.json { render json: @post, status: :created, location: @post }
-      else
-        format.html { render action: "new" }
-        format.json { render json: @post.errors, status: :unprocessable_entity }
-      end
-    end
+  	current_user = User.find(session[:user_id])
+  	updated_at = current_user.posts.create!(params[:post]).updated_at
+  	message = params[:post][:message]
+  	@post = Post.new
+	  if current_user.save
+	    @notice = "Post successfully saved."
+	    followers = current_user.followers()
+	    puts followers.size()
+	    for user in followers
+	    	params =	URI.escape("/users/newMessage?id=#{user.id}&message=#{message}&updated_at=#{updated_at}")
+	    	res = Net::HTTP.start('localhost', 5000) do |http|
+				  http.get(params)
+				end
+	    end
+	  else
+	    @notice = "Error."
+	  end
+	  render action: "new" 
   end
 
   # PUT /posts/1
@@ -80,4 +72,11 @@ class PostsController < ApplicationController
       format.json { head :no_content }
     end
   end
+
+  private
+
+  def user_logged
+  	redirect_to "/home" unless session[:user_id]
+  end
+
 end

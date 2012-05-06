@@ -16,7 +16,9 @@ class UsersController < ApplicationController
 
 	def destroy
 	    if User.find(params[:id]).destroy
-	    	respond_with response: "success"
+	    	respond_with({:response => "success"}, :location => posts_url)
+	    else
+	    	respond_with({:response => "error"}, :location => posts_url)
 	    end
   	end
 
@@ -34,20 +36,24 @@ class UsersController < ApplicationController
   	end
 
   	def follow
-  		current_user = session[:user]
+  		current_user = User.find(session[:user_id])
   		@user = User.find(params[:id])
-  		current_user.follow!(@user)
+  		if current_user.follow!(@user)
+  			respond_with({:response => "success"}, :location => posts_url)
+  		else
+  			respond_with({:response => "error"}, :location => posts_url)
+  		end
   	end
 
   	def delete_followers
-  		current_user = session[:user]
+  		current_user = User.find(session[:user_id])
   		@user = User.find(params[:id])
   		current_user.relations(@user).forbid = true
   		current_user.save
   	end
 
   	def delete_followings
-  		current_user = session[:user]
+  		current_user = User.find(session[:user_id])
   		@user = User.find(params[:id])
   		current_user.unfollow!(@user)
   	end
