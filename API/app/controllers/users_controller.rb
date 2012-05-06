@@ -5,17 +5,18 @@ class UsersController < ApplicationController
 
 	def index
 		@users = User.all
-
 		render_for_api :return_public, :json => @users, :root => :users
-		#respond_to do |format|
-	     # format.json { render_for_api :return_public, :json => @users, :root => :users }
-	    #end
-		#respond_with :json => resp
+	end
+
+	def show
+		@user = User.find(params[:id])
+		puts @user.inspect
+		render_for_api :user_with_posts, :json => @user, :root => :user
 	end
 
 	def destroy
 	    if User.find(params[:id]).destroy
-	    	respond_with "success"
+	    	respond_with response: "success"
 	    end
   	end
 
@@ -23,13 +24,13 @@ class UsersController < ApplicationController
 	def followings
 	    @user = User.find(params[:id])
 	    @users = @user.following_users()
-	    respond_with @users
+	    render_for_api :return_info_follow, :json => @users, :root => :users
   	end
 
   	def followers
 	    @user = User.find(params[:id])
 	    @users = @user.followers()
-	    respond_with	@users
+	    render_for_api :return_info_follow, :json => @users, :root => :users
   	end
 
   	def follow

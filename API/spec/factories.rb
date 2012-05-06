@@ -5,4 +5,10 @@ FactoryGirl.define do
     first_name 	"Esteban"
     last_name	"Arango"
   end
+
+  factory :post do
+    message "Eppa pa ope"
+    user
+  end
+
 end

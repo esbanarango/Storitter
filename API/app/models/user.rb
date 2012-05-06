@@ -1,7 +1,7 @@
 class User < Profile
 	attr_accessible :username, :email, :first_name, :last_name, :fb_uid, :fb_access_token
 
-	after_save :confirmation_and_welcome_notification
+	after_create :confirmation_and_welcome_notification
 
 	#Associations
 	has_many :posts, dependent: :destroy
@@ -13,14 +13,17 @@ class User < Profile
                                    dependent:   :destroy
   	has_many :followers, through: :reverse_relations, source: :follower
   	
+  	has_one :session
 
   	acts_as_api
 
+  	# Template for basic user info
   	api_accessible :return_public do |template|
   		template.add :id
 		template.add :username
   		template.add :first_name
 	    template.add :last_name
+	    template.add :email
 	    template.add :followers_count
 		template.add :followings_count
 		template.add :posts_count
@@ -34,6 +37,20 @@ class User < Profile
 		template.add :posts_count
 		template.add :profile_picture
 	end
+
+	# Complete user info with post
+	api_accessible :user_with_posts do |template|
+		template.add :id
+		template.add :username
+  		template.add :first_name
+	    template.add :last_name
+	    template.add :email
+	    template.add :followers_count
+		template.add :followings_count
+		template.add :posts_count
+		template.add :posts
+	end
+
 
 	# Public methods for ac_as_api
 	def followers_count

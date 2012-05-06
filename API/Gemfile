@@ -38,6 +38,8 @@ gem "cancan", "~> 1.6.7"
 gem "kaminari", "~> 0.13.0"
 # Share on facebook
 gem "koala", "~> 1.4.1"
+# Used to easily generate fake data: names, addresses, phone numbers, etc.
+gem "faker", "~> 1.0.1"
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'

@@ -1,4 +1,8 @@
 h1 Storitter User
 
-ul#listing
-    li= users
+ul#Users
+	each user in users
+		li(id=[user.id]) #{user.username}
+			ul
+				li Email: #{user.email}  
+				li Total post: #{user.posts_count}

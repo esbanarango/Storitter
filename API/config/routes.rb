@@ -1,10 +1,11 @@
 API::Application.routes.draw do
 
-  root to: 'sessions#login'
+  root to: 'sessions#home'
 
   resources :users do
     member do
       get     :followings, :followers
+      get     :posts
       post    :follow
     end
   end

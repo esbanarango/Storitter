@@ -8,25 +8,9 @@ class SessionsController < ApplicationController
 		if params["fb_access_token"]
 			fb_access_token = params["fb_access_token"]
 			graph = Koala::Facebook::API.new(fb_access_token)
-			@user = graph.get_object("me")
-			fb_uid = @user["id"]
-			# Some FaceBook user's doesn't have username yet
-			username = (@user["username"])?@user["username"]:@user["first_name"]
-			if  !User.exists?(['fb_uid = ?', 'fb_uid'])
-				newUser = User.create!(username: username, first_name: @user["first_name"], last_name: @user["last_name"], 
-					email: @user["email"], fb_uid: fb_uid , fb_access_token: fb_access_token )
-				#graph.put_wall_post("Me has just joined Storitter")
-				Session.create!(access_token: fb_access_token, user_id: newUser.id)
-			else
-				#Update the fb_access_token
-				userUpdate = User.where(fb_uid: fb_uid)
-				userUpdate.fb_access_token = fb_access_token
-				userUpdate.save
-				userSession = Session.where(user_id: userUpdate.id)
-				userSession.access_token = fb_access_token
-				userSession.save
-			end
-			respond_with @user and fb_access_token
+			checkOrInsert(graph,fb_access_token)
+
+			respond_with @userFacebook
 		end
 	end
 
@@ -45,6 +29,18 @@ class SessionsController < ApplicationController
 		unless params[:error_code] or params[:error] then
 			#get the access token
 			session['access_token'] = session['oauth'].get_access_token(params[:code])
+			graph = Koala::Facebook::API.new(session['access_token'])
+			@userFacebook = graph.get_object("me")
+			userEmail = @userFacebook["email"]
+			fb_uid = @userFacebook["id"]
+
+			checkOrInsert(graph,session['access_token'])
+
+			@user  = User.find_by_email(userEmail)
+			session['user_id'] = @user.id
+			session['user_email'] = userEmail
+			session['username'] = @user.username
+
 		end
 		redirect_to '/home'
 	end
@@ -57,14 +53,38 @@ class SessionsController < ApplicationController
 
 	def home
 	     if session['access_token']
-	       @face='You are logged in! <a href="/logout">Logout</a>'
+	       username = session["username"]
+	       @face='Welcome '+ username +'<br> You are logged in! <a href="/logout">Logout</a>'
 	       @graph = Koala::Facebook::API.new(session["access_token"])
 	       @token = session['access_token']
 	       #@graph.put_wall_post("Me has just joined Storitter")
 	     else
 	       @face='<a href="/login">Login</a>'
 	     end
+	end
 
+	private
+
+	# Returns false, if didn't insert a new user.
+	def checkOrInsert(graph,fb_access_token)
+		userFacebook = graph.get_object("me")
+		fb_uid = userFacebook["id"]
+		if !User.exists?(['fb_uid = ?', fb_uid])
+			puts "Nuevo Usuario"
+			# Some FaceBook user's doesn't have username yet
+			username = (userFacebook["username"])?userFacebook["username"]:userFacebook["first_name"].strip..gsub(/\s+/, "_")
+			newUser = User.create!(username: username, first_name: userFacebook["first_name"], last_name: userFacebook["last_name"], 
+						email: userFacebook["email"], fb_uid: fb_uid , fb_access_token: fb_access_token )
+			graph.put_wall_post("Me has just joined Storitter")
+			newUser.build_session(access_token: fb_access_token)
+			newUser.save
+
+		else
+			userUpdate = User.find_by_fb_uid(fb_uid)
+			userUpdate.fb_access_token = fb_access_token
+			userUpdate.session.access_token = fb_access_token
+			userUpdate.save
+		end
 		
 	end
 
