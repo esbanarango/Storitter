@@ -26,7 +26,7 @@ Now you need to start the Rails server and Node.js server.
 >`$ cd API` 
 
 Run `$ bunlde install` to install all the gems, then `$ rake db:migrate` to set up the database.
-* To try the app with try it with fake users you can populate the database running `$ bundle exec rake db:populate` it will run a Rake task (_lib/tasks/sample_data.rake_) that will populate the database..
+* To try the app with fake users you can populate the database running `$ bundle exec rake db:populate` it will run a Rake task (_lib/tasks/sample_data.rake_) that will populate the database..
 
 Now you can start the Rails server `$ rails s`. 
 >By default it'll run on port _3000_ (and Node.js on port _5000_)
