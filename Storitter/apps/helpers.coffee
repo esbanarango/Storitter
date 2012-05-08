@@ -11,8 +11,9 @@ class Helpers
 		request.on 'response', (res) ->
 		  json = '' 		  
 		  res.on 'data', (chunk) -> 		  			  	
-		    json += chunk
+		  	json += chunk
 		   res.on 'end', ->
+		   	#console.log json
 		   	callback JSON.parse(json)
 
 module.exports = Helpers

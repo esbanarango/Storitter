@@ -2,7 +2,8 @@ h1 Storitter Users
 
 ul#Users
 	each user in users
-		li(id=[user.id]) #{user.username}
+		li(id=[user.id]) #{user.username} 
+			a(class='follow', id='#{user.id}') Follow
 			ul
 				li Email: #{user.email}
 				li Following: #{user.followings_count}  

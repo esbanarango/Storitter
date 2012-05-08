@@ -6,7 +6,6 @@ routes = (app) ->
 
 	app.namespace '/users', ->
 
-
 		app.get '/newMessage', (req, res) ->
 
 		    id = req.query["id"]
@@ -24,7 +23,6 @@ routes = (app) ->
 	    	res.json({response: respToServer})
 	    	res.end()
 
-
 		app.get '/:id', (req, res) ->
 
 			hrlp.requestAPI "localhost", "/users/#{req.params.id}.json", "GET", (_users) ->
@@ -33,17 +31,16 @@ routes = (app) ->
 					title: "User #{user.username}"
 					user: user
 
-
 		app.get '/', (req, res) ->
 			hrlp.requestAPI "localhost", "/users.json", "GET", (_users) ->
 				users = []
 				for key, value  of _users
-					for usr in value
-		    			user = new User usr
-		    			users.push user
+				    for usr in value
+					    user = new User usr
+					    users.push user
 				res.render "#{__dirname}/views/all",
-	            	title: 'Storitter Users'
-	            	users: users
+					   title: 'Storitter Users'						
+					   users: users
 
 	    
 module.exports = routes

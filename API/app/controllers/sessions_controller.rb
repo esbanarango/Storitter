@@ -67,6 +67,7 @@ class SessionsController < ApplicationController
 	def checkOrInsert(graph,fb_access_token)
 		userFacebook = graph.get_object("me")
 		fb_uid = userFacebook["id"]
+		session["username"] = userFacebook["username"]
 		if !User.exists?(['fb_uid = ?', fb_uid])
 			puts "Nuevo Usuario"
 			# Some FaceBook user's doesn't have username yet

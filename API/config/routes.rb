@@ -7,11 +7,15 @@ API::Application.routes.draw do
       get     :followings, :followers
       get     :posts
       post    :follow
+      get    :follow
     end
   end
 
+  #More user actions
   match '/users/:id/followers', to: 'users#delete_followers', :via => 'delete'
   match '/users/:id/followings', to:  'users#delete_followings', :via => 'delete'
+  match '/myfollowers', to:  'users#my_followers', :via => 'get'
+  match '/myfollowings', to:  'users#my_followings', :via => 'get'
 
   resources :sessions
 
