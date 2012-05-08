@@ -34,3 +34,29 @@ As mentioned before, the Rails project is just the API for the App, so it has to
 
 To keep having the current user session available from Node.js we must use a Cross Domain requests from Node.js to Rails.
 > It is a cross domain re¡quest because Rails is running on port 3000 and Node on port 5000
+So Jquery make it so easy for us! :)
+
+Client side code:
+```javascript
+jQuery.getJSON("http://localhost:3000/myfollowers.js?callback=?",function(data) {
+	// Handle response here
+	console.info("Rails returned: ",data);
+});
+```
+
+Server side code:
+```ruby
+def my_followers
+    current_user = User.find(session[:user_id])
+    followers = current_user.followers()
+    respond_with do |format|
+      format.json { render_for_api :return_public, :json => followers, :root => :users }
+      #If we want to respon to a JSONP
+      j = ActiveSupport::JSON
+      respondeToJsonp = params[:callback]+'('+j.encode(followers)+')'
+      format.js   { render :json => respondeToJsonp }
+    end
+    
+  end
+```
+
