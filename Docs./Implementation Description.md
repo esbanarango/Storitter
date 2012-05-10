@@ -33,7 +33,7 @@ and then add it to th template `template.add :profile_picture_small`
 As mentioned before, the Rails project is just the API for the App, so it has to responde to multiple clients. The client that I made here was the Node.js application, so Node.js has to comunicate with Rails. The problem here was that when you make a request from Node.js to a Rails app, it won't create a session, so, supose you want to retrieve all the Followers from the _current user_ (the user logged from Rails app), the _current user_ session does not exist if you would make that request directly from node.js. This problem might have multiple solutions. The solution which I used was through Ajax, I'll explain it below:
 
 To keep having the current user session available from Node.js we must use a Cross Domain requests from Node.js to Rails.
-> It is a cross domain re¡quest because Rails is running on port 3000 and Node on port 5000
+> It is a cross domain request because Rails is running on port 3000 and Node on port 5000
 So Jquery make it so easy for us! :)
 
 Client side code:
